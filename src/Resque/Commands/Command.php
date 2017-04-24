@@ -11,10 +11,8 @@ namespace Resque\Commands;
 
 use Resque;
 use Resque\Helpers\Util;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -45,7 +43,6 @@ class Command extends \Symfony\Component\Console\Command\Command {
 		'namespace'      => 'redis.namespace',
 		'password'       => 'redis.password',
 		'verbose'        => 'default.verbose',
-		'queue'          => 'default.jobs.queue',
 		'delay'          => 'default.jobs.delay',
 		'queue'          => 'default.workers.queue',
 		'blocking'       => 'default.workers.blocking',
@@ -73,7 +70,6 @@ class Command extends \Symfony\Component\Console\Command\Command {
 		return array_merge(
 			$definitions,
 			array(
-				new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file. Inline options override.', Resque::DEFAULT_CONFIG_FILE),
 				new InputOption('include', 'I', InputOption::VALUE_OPTIONAL, 'Path to include php file'),
 				new InputOption('host', 'H', InputOption::VALUE_OPTIONAL, 'The Redis hostname.', Resque\Redis::DEFAULT_HOST),
 				new InputOption('port', 'p', InputOption::VALUE_OPTIONAL, 'The Redis port.', Resque\Redis::DEFAULT_PORT),

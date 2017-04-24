@@ -13,6 +13,9 @@ use Resque\Redis;
  * Main Resque class
  *
  * @author Michael Haynes <mike@mjphaynes.com>
+ *
+ * @method static \Resque\Job later($delay, $job, array $data = array(), $queue = null)
+ * @method static \Resque\Job push($job, array $data = null, $queue = null)
  */
 class Resque extends \yii\base\Component {
 
