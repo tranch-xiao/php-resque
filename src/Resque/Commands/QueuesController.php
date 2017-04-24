@@ -46,4 +46,20 @@ class QueuesController extends Controller
 
         Yii::info((string)$table);
     }
+
+    public function clear($force = null) {
+
+        if ($force || $this->confirm('Continuing will clear all php-resque data from Redis. Are you sure?', false)) {
+            $this->stdout('Clearing Redis resque data...');
+
+            $redis = \Resque\Redis::instance();
+
+            $keys = $redis->keys('*');
+            foreach ($keys as $key) {
+                $redis->del($key);
+            }
+
+            $this->stdout('<pop>Done.</pop>');
+        }
+    }
 }

@@ -270,4 +270,79 @@ class WorkerController extends Controller
             }
         }
     }
+
+    /**
+     * List all running workers on host
+     */
+    public function actionList() {
+        $workers = Worker::hostWorkers();
+
+        if (empty($workers)) {
+            \Yii::warning('There are no workers on this host.');
+            return;
+        }
+
+        $table = new \Resque\Helpers\Table($this);
+        $table->setHeaders(array('#', 'Status', 'ID', 'Running for', 'Running job', 'P', 'C', 'F', 'Interval', 'Timeout', 'Memory (Limit)'));
+
+        foreach ($workers as $i => $worker) {
+            $packet = $worker->getPacket();
+
+            $table->addRow(array(
+                $i + 1,
+                \Resque\Worker::$statusText[$packet['status']],
+                (string)$worker,
+                \Resque\Helpers\Util::human_time_diff($packet['started']),
+                (!empty($packet['job_id']) ? $packet['job_id'].' for '.\Resque\Helpers\Util::human_time_diff($packet['job_started']) : '-'),
+                $packet['processed'],
+                $packet['cancelled'],
+                $packet['failed'],
+                $packet['interval'],
+                $packet['timeout'],
+                \Resque\Helpers\Util::bytes($packet['memory']).' ('.$packet['memory_limit'].' MB)',
+            ));
+        }
+
+        \Yii::info((string)$table);
+    }
+
+    public function clearUp() {
+        $host = new \Resque\Host();
+        $cleaned_hosts = $host->cleanup();
+
+        $worker = new \Resque\Worker('*');
+        $cleaned_workers = $worker->cleanup();
+        $cleaned_hosts = array_merge_recursive($cleaned_hosts, $host->cleanup());
+
+        $cleaned_jobs = \Resque\Job::cleanup();
+
+        \Yii::info('Cleaned hosts: <pop>'.json_encode($cleaned_hosts['hosts']).'</pop>');
+        \Yii::info('Cleaned workers: <pop>'.json_encode(array_merge($cleaned_hosts['workers'], $cleaned_workers)).'</pop>');
+        \Yii::info('Cleaned <pop>'.$cleaned_jobs['zombie'].'</pop> zombie job'.($cleaned_jobs['zombie'] == 1 ? '' : 's'));
+        \Yii::info('Cleared <pop>'.$cleaned_jobs['processed'].'</pop> processed job'.($cleaned_jobs['processed'] == 1 ? '' : 's'));
+    }
+
+    /**
+     * List hosts with running workers
+     */
+    public function actionHosts() {
+        $hosts = \Resque\Redis::instance()->smembers(\Resque\Host::redisKey());
+
+        if (empty($hosts)) {
+            \Yii::warning('There are no hosts with running workers.');
+            return;
+        }
+
+        $table = new \Resque\Helpers\Table($this);
+        $table->setHeaders(array('#', 'Hostname', '# workers'));
+
+        foreach ($hosts as $i => $hostname) {
+            $host = new \Resque\Host($hostname);
+            $workers = \Resque\Redis::instance()->scard(\Resque\Host::redisKey($host));
+
+            $table->addRow(array($i + 1, $hostname, $workers));
+        }
+
+        \Yii::info((string)$table);
+    }
 }
