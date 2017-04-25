@@ -1166,7 +1166,7 @@ class Worker {
 	protected function updateProcLine($status) {
 		$status = $this->getProcessTitle($status);
 		if (function_exists('cli_set_process_title')) {
-			cli_set_process_title($status);
+			@cli_set_process_title($status);
 			return;
 		}
 		

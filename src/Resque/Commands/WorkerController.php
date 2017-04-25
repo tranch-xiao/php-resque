@@ -302,7 +302,7 @@ class WorkerController extends Controller
             )));
         }
 
-        echo $table->renderTable();
+        echo $table->renderTable(), PHP_EOL;
     }
 
     public function clearUp() {
@@ -341,6 +341,6 @@ class WorkerController extends Controller
             $table->addRow(array_combine($tableHeader, array($i + 1, $hostname, $workers)));
         }
 
-        echo $table->renderTable();
+        echo $table->renderTable(), PHP_EOL;
     }
 }

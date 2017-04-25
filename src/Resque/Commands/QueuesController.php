@@ -45,7 +45,7 @@ class QueuesController extends Controller
             )));
         }
 
-        echo $table->renderTable();
+        echo $table->renderTable(), PHP_EOL;
     }
 
     public function clear($force = null) {
