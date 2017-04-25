@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+use Resque\Helpers\Util;
 use Resque\Redis;
 
 /**
@@ -87,4 +88,14 @@ class Resque extends \yii\base\Component {
 		return Redis::instance()->hgetall('stats');
 	}
 
+    public static function getConfig($key, $default = null) {
+        if (!is_null($key)) {
+            if (false !== Util::path(static::$config, $key, $found)) {
+                return $found;
+            } else {
+                return $default;
+            }
+        }
+        return static::$config;
+    }
 }
