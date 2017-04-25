@@ -18,7 +18,8 @@
 		"monolog/monolog": "~1.7",
 		"symfony/console": "~3.2",
 		"symfony/process": "~3.2",
-		"yiisoft/yii2": "2.0.*"
+		"yiisoft/yii2": "2.0.*",
+		"malios/php-to-ascii-table": "1.0.0"
 	},
 	"suggest": {
 		"ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker in PHP versions < 5.5.0.",

@@ -23,28 +23,29 @@ class QueuesController extends Controller
         $queues = Redis::instance()->smembers('queues');
 
         if (empty($queues)) {
-            \Yii::warning('<warn>There are no queues.</warn>');
+            \Yii::warning('There are no queues.');
             return;
         }
 
-        $table = new \Resque\Helpers\Table($this);
-        $table->setHeaders(array('#', 'Name', 'Queued', 'Delayed', 'Processed', 'Failed', 'Cancelled', 'Total'));
+        $table = new \AsciiTable\Builder();
+        $tableHeader = array('#', 'Name', 'Queued', 'Delayed', 'Processed', 'Failed', 'Cancelled', 'Total');
 
         foreach ($queues as $i => $queue) {
             $stats = Redis::instance()->hgetall(Queue::redisKey($queue, 'stats'));
 
-            $table->addRow(array(
-                $i + 1, $queue,
+            $table->addRow(array_combine($tableHeader, array(
+                $i + 1,
+                $queue,
                 (int)@$stats['queued'],
                 (int)@$stats['delayed'],
                 (int)@$stats['processed'],
                 (int)@$stats['failed'],
                 (int)@$stats['cancelled'],
                 (int)@$stats['total']
-            ));
+            )));
         }
 
-        Yii::info((string)$table);
+        echo $table->renderTable();
     }
 
     public function clear($force = null) {

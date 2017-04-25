@@ -101,8 +101,7 @@ class WorkerController extends Controller
      *
      * @param string|null $id The id of the worker to resume (optional; if not present resumes all workers).
      */
-    public function actionResume($id = null)
-    {
+    public function actionResume($id = null)    {
         // Do a cleanup
         $worker = new Worker('*');
         $worker->cleanup();
@@ -282,13 +281,13 @@ class WorkerController extends Controller
             return;
         }
 
-        $table = new \Resque\Helpers\Table($this);
-        $table->setHeaders(array('#', 'Status', 'ID', 'Running for', 'Running job', 'P', 'C', 'F', 'Interval', 'Timeout', 'Memory (Limit)'));
+        $table = new \AsciiTable\Builder();
+        $tableHeader = array('#', 'Status', 'ID', 'Running for', 'Running job', 'P', 'C', 'F', 'Interval', 'Timeout', 'Memory (Limit)');
 
         foreach ($workers as $i => $worker) {
             $packet = $worker->getPacket();
 
-            $table->addRow(array(
+            $table->addRow(array_combine($tableHeader, array(
                 $i + 1,
                 \Resque\Worker::$statusText[$packet['status']],
                 (string)$worker,
@@ -300,10 +299,10 @@ class WorkerController extends Controller
                 $packet['interval'],
                 $packet['timeout'],
                 \Resque\Helpers\Util::bytes($packet['memory']).' ('.$packet['memory_limit'].' MB)',
-            ));
+            )));
         }
 
-        \Yii::info((string)$table);
+        echo $table->renderTable();
     }
 
     public function clearUp() {
@@ -333,16 +332,15 @@ class WorkerController extends Controller
             return;
         }
 
-        $table = new \Resque\Helpers\Table($this);
-        $table->setHeaders(array('#', 'Hostname', '# workers'));
+        $table = new \AsciiTable\Builder();
+        $tableHeader = array('#', 'Hostname', '# workers');
 
         foreach ($hosts as $i => $hostname) {
             $host = new \Resque\Host($hostname);
             $workers = \Resque\Redis::instance()->scard(\Resque\Host::redisKey($host));
-
-            $table->addRow(array($i + 1, $hostname, $workers));
+            $table->addRow(array_combine($tableHeader, array($i + 1, $hostname, $workers)));
         }
 
-        \Yii::info((string)$table);
+        echo $table->renderTable();
     }
 }
