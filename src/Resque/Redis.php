@@ -325,9 +325,11 @@ class Redis {
         $parameters = $config;
         $options = null;
 
-        if (isset($config['options'])) {
-	        unset($parameters['options']);
-	        $options = $config['options'];
+        if (isset($config['parameters'])) {
+            $parameters = $config['parameters'];
+            if (isset($config['options'])) {
+                $options = $config['options'];
+            }
         }
 
 		// setup password
