@@ -24,6 +24,8 @@ class Resque extends \yii\base\Component {
 	 */
 	const VERSION = '1.0.0';
 
+    const DEFAULT_EXPIRY_TIME = 604800;
+
 	public $parameters = array(
         'scheme'    => Redis::DEFAULT_SCHEME,
         'host'      => Redis::DEFAULT_HOST,
