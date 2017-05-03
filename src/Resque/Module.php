@@ -36,7 +36,7 @@ class Module extends BaseModule implements BootstrapInterface
         } else {
             // common style
             Redis::setConfig(array(
-                'host' => $redisConnection->host,
+                'host' => $redisConnection->hostname,
                 'port' => $redisConnection->port,
                 'password' => $redisConnection->password,
                 'database' => $redisConnection->database,
