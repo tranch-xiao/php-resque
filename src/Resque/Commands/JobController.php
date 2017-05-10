@@ -28,12 +28,12 @@ class JobController extends Controller
 
         if ($delay) {
             if ($job = Resque::later($delay, $job, $args, $queue)) {
-                Yii::info('Job <pop>' . $job . '</pop> will be queued at <pop>' . date('r', $job->getDelayedTime()) . '</pop> on <pop>' . $job->getQueue() . '</pop> queue.');
+                Yii::info('Job `' . $job . '` will be queued at `' . date('r', $job->getDelayedTime()) . '` on `' . $job->getQueue() . '` queue.');
                 return;
             }
         } else {
             if ($job = Resque::push($job, $args, $queue)) {
-                Yii::info('Job <pop>' . $job . '</pop> added to <pop>' . $job->getQueue() . '</pop> queue.');
+                Yii::info('Job `' . $job . '` added to `' . $job->getQueue() . '` queue.');
                 return;
             }
         }

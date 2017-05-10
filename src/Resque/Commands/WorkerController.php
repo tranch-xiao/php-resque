@@ -47,14 +47,14 @@ class WorkerController extends Controller
 
             if ($job_pid and posix_kill($job_pid, 0)) {
                 if (posix_kill($job_pid, SIGUSR1)) {
-                    Yii::info('Worker <pop>'.$worker.'</pop> running job SIGUSR1 signal sent.');
+                    Yii::info('Worker `'.$worker.'` running job SIGUSR1 signal sent.');
 
                 } else {
-                    Yii::info('Worker <pop>'.$worker.'</pop> <error>running job SIGUSR1 signal could not be sent.</error>');
+                    Yii::info('Worker `'.$worker.'` <error>running job SIGUSR1 signal could not be sent.</error>');
                 }
 
             } else {
-                Yii::info('Worker <pop>'.$worker.'</pop> has no running job.');
+                Yii::info('Worker `'.$worker.'` has no running job.');
             }
         }
     }
@@ -88,10 +88,10 @@ class WorkerController extends Controller
 
         foreach ($workers as $worker) {
             if (posix_kill($worker->getPid(), SIGUSR2)) {
-                Yii::info('Worker <pop>'.$worker.'</pop> USR2 signal sent.');
+                Yii::info('Worker `'.$worker.'` USR2 signal sent.');
 
             } else {
-                Yii::info('Worker <pop>'.$worker.'</pop> <error>could not send USR2 signal.</error>');
+                Yii::info('Worker `'.$worker.'` <error>could not send USR2 signal.</error>');
             }
         }
     }
@@ -124,10 +124,10 @@ class WorkerController extends Controller
 
         foreach ($workers as $worker) {
             if (posix_kill($worker->getPid(), SIGCONT)) {
-                Yii::info('Worker <pop>'.$worker.'</pop> CONT signal sent.');
+                Yii::info('Worker `'.$worker.'` CONT signal sent.');
 
             } else {
-                Yii::info('Worker <pop>'.$worker.'</pop> <error>could not send CONT signal.</error>');
+                Yii::info('Worker `'.$worker.'` <error>could not send CONT signal.</error>');
             }
         }
     }
@@ -169,7 +169,7 @@ class WorkerController extends Controller
 
                     // Parent
                 } elseif ($child > 0) {
-                    Yii::info('Worker <pop>'.$worker.'</pop> restarted.');
+                    Yii::info('Worker `'.$worker.'` restarted.');
                     continue;
 
                     // Child
@@ -181,11 +181,11 @@ class WorkerController extends Controller
                     $new_worker->setLogger();
                     $new_worker->work();
 
-                    Yii::info('Worker <pop>'.$worker.'</pop> restarted as <pop>'.$new_worker.'</pop>.');
+                    Yii::info('Worker `'.$worker.'` restarted as `'.$new_worker.'`.');
                 }
 
             } else {
-                Yii::info('Worker <pop>'.$worker.'</pop> <error>could not send TERM signal.</error>');
+                Yii::info('Worker `'.$worker.'` <error>could not send TERM signal.</error>');
             }
         }
 
@@ -262,10 +262,10 @@ class WorkerController extends Controller
 
         foreach ($workers as $worker) {
             if (posix_kill($worker->getPid(), constant('SIG' . $sig))) {
-                Yii::info('Worker <pop>' . $worker . '</pop> ' . $sig . ' signal sent.');
+                Yii::info('Worker `' . $worker . '` ' . $sig . ' signal sent.');
 
             } else {
-                Yii::error("Worker <pop>$worker</pop> could not send $sig signal.");
+                Yii::error("Worker `$worker` could not send $sig signal.");
             }
         }
     }
@@ -277,7 +277,7 @@ class WorkerController extends Controller
         $workers = Worker::hostWorkers();
 
         if (empty($workers)) {
-            \Yii::warning('There are no workers on this host.');
+            Yii::warning('There are no workers on this host.');
             return;
         }
 
@@ -305,7 +305,7 @@ class WorkerController extends Controller
         echo $table->renderTable(), PHP_EOL;
     }
 
-    public function clearUp() {
+    public function actionClearUp() {
         $host = new \Resque\Host();
         $cleaned_hosts = $host->cleanup();
 
@@ -315,10 +315,10 @@ class WorkerController extends Controller
 
         $cleaned_jobs = \Resque\Job::cleanup();
 
-        \Yii::info('Cleaned hosts: <pop>'.json_encode($cleaned_hosts['hosts']).'</pop>');
-        \Yii::info('Cleaned workers: <pop>'.json_encode(array_merge($cleaned_hosts['workers'], $cleaned_workers)).'</pop>');
-        \Yii::info('Cleaned <pop>'.$cleaned_jobs['zombie'].'</pop> zombie job'.($cleaned_jobs['zombie'] == 1 ? '' : 's'));
-        \Yii::info('Cleared <pop>'.$cleaned_jobs['processed'].'</pop> processed job'.($cleaned_jobs['processed'] == 1 ? '' : 's'));
+        Yii::info('Cleaned hosts: `'.json_encode($cleaned_hosts['hosts']).'`');
+        Yii::info('Cleaned workers: `'.json_encode(array_merge($cleaned_hosts['workers'], $cleaned_workers)).'`');
+        Yii::info('Cleaned `'.$cleaned_jobs['zombie'].'` zombie job'.($cleaned_jobs['zombie'] == 1 ? '' : 's'));
+        Yii::info('Cleared `'.$cleaned_jobs['processed'].'` processed job'.($cleaned_jobs['processed'] == 1 ? '' : 's'));
     }
 
     /**
@@ -328,7 +328,7 @@ class WorkerController extends Controller
         $hosts = \Resque\Redis::instance()->smembers(\Resque\Host::redisKey());
 
         if (empty($hosts)) {
-            \Yii::warning('There are no hosts with running workers.');
+            Yii::warning('There are no hosts with running workers.');
             return;
         }
 

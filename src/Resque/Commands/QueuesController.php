@@ -48,7 +48,7 @@ class QueuesController extends Controller
         echo $table->renderTable(), PHP_EOL;
     }
 
-    public function clear($force = null) {
+    public function actionClear($force = null) {
 
         if ($force || $this->confirm('Continuing will clear all php-resque data from Redis. Are you sure?', false)) {
             $this->stdout('Clearing Redis resque data...');
@@ -60,7 +60,7 @@ class QueuesController extends Controller
                 $redis->del($key);
             }
 
-            $this->stdout('<pop>Done.</pop>');
+            $this->stdout('Done.');
         }
     }
 }
